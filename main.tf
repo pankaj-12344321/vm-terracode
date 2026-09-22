@@ -40,7 +40,7 @@ resource "google_compute_instance" "myinstance"{
 }
 
 
-resource "google_compute_netwrok" "mynet"{
+resource "google_compute_network" "mynet"{
     name = "vm-vpc"
    
 }
@@ -48,6 +48,6 @@ resource "google_compute_netwrok" "mynet"{
 resource "google_compute_subnetwork" "my-subnet" {
   name = "vpc-subnet"
   region = var.region
-  network = google_compute_netwrok.mynet.id
+  network = google_compute_network.mynet.id
   ip_cidr_range = "10.0.0.0/28"
 }
