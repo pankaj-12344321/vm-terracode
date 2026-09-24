@@ -1,4 +1,10 @@
 
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+
 resource "google_compute_instance" "myinstance"{
 
     for_each = toset(var.iname)
@@ -8,14 +14,12 @@ resource "google_compute_instance" "myinstance"{
 
   tags = ["foo", "bar"]
 
-  boot_disk {
+   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
-      labels = {
-        my_label = "value"
-      }
+      image = data.google_compute_image.my_image.self_link
     }
   }
+
 
   // Local SSD disk
   scratch_disk {
@@ -23,7 +27,9 @@ resource "google_compute_instance" "myinstance"{
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.mynet.name
+    subnetwork = google_compute_subnetwork.my-subnet.name
+
 
     access_config {
       // Ephemeral public IP
@@ -42,6 +48,7 @@ resource "google_compute_instance" "myinstance"{
 
 resource "google_compute_network" "mynet"{
     name = "vm-vpc"
+    auto_create_subnetworks = false
    
 }
 
